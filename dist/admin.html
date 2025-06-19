@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - WEMIA</title>
+  <script type="module" crossorigin src="/assets/main-CxOM2RF4.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-CDjRPHKg.css">
+</head>
+<body class="bg-background" x-data="adminDashboard">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-primary">WEMIA</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <span class="text-dark-secondary" x-text="$store.auth.user?.email"></span>
+                    <button @click="$store.auth.logout()" class="text-dark-secondary hover:text-primary transition-colors">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="min-h-screen pt-24 pb-12">
+        <div class="container">
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-medium text-dark-secondary mb-2">Demandes en attente</h3>
+                    <p class="text-3xl font-bold text-primary" x-text="stats.pending"></p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-medium text-dark-secondary mb-2">En cours</h3>
+                    <p class="text-3xl font-bold text-primary" x-text="stats.inProgress"></p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-medium text-dark-secondary mb-2">Complétées</h3>
+                    <p class="text-3xl font-bold text-primary" x-text="stats.completed"></p>
+                </div>
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-medium text-dark-secondary mb-2">Total</h3>
+                    <p class="text-3xl font-bold text-primary" x-text="stats.total"></p>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="bg-white rounded-xl p-6 shadow-sm mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-dark-secondary mb-2">Statut</label>
+                        <select x-model="filters.status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="">Tous</option>
+                            <option value="pending">En attente</option>
+                            <option value="approved">Approuvée</option>
+                            <option value="in_progress">En cours</option>
+                            <option value="completed">Complétée</option>
+                            <option value="rejected">Rejetée</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-dark-secondary mb-2">Priorité</label>
+                        <select x-model="filters.priority" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                            <option value="">Toutes</option>
+                            <option value="high">Haute</option>
+                            <option value="medium">Moyenne</option>
+                            <option value="low">Basse</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-dark-secondary mb-2">Recherche</label>
+                        <input type="text" x-model="filters.search" placeholder="Titre ou description..."
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div class="flex items-end">
+                        <button @click="loadRequests()" class="btn-primary w-full">
+                            Filtrer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requests Table -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-50 text-left">
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">ID</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Client</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Titre</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Priorité</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Statut</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-xs font-medium text-dark-secondary uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <template x-for="request in requests" :key="request.id">
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap" x-text="request.id"></td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm font-medium text-dark" x-text="request.user_name"></div>
+                                        <div class="text-sm text-dark-secondary" x-text="request.user_email"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-sm text-dark" x-text="request.title"></div>
+                                        <div class="text-sm text-dark-secondary" x-text="truncate(request.description, 100)"></div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                              :class="{
+                                                  'bg-red-100 text-red-800': request.priority === 'high',
+                                                  'bg-yellow-100 text-yellow-800': request.priority === 'medium',
+                                                  'bg-green-100 text-green-800': request.priority === 'low'
+                                              }"
+                                              x-text="priorityLabel(request.priority)">
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                              :class="{
+                                                  'bg-gray-100 text-gray-800': request.status === 'pending',
+                                                  'bg-blue-100 text-blue-800': request.status === 'in_progress',
+                                                  'bg-green-100 text-green-800': request.status === 'completed',
+                                                  'bg-red-100 text-red-800': request.status === 'rejected',
+                                                  'bg-yellow-100 text-yellow-800': request.status === 'approved'
+                                              }"
+                                              x-text="statusLabel(request.status)">
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-dark-secondary" x-text="formatDate(request.created_at)"></td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button @click="openRequestDetails(request)" class="text-primary hover:text-primary/80">
+                                            Détails
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex-1 flex justify-between sm:hidden">
+                            <button @click="previousPage" :disabled="currentPage === 1"
+                                    class="btn-outline" :class="{'opacity-50 cursor-not-allowed': currentPage === 1}">
+                                Précédent
+                            </button>
+                            <button @click="nextPage" :disabled="currentPage === totalPages"
+                                    class="btn-outline" :class="{'opacity-50 cursor-not-allowed': currentPage === totalPages}">
+                                Suivant
+                            </button>
+                        </div>
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-dark-secondary">
+                                    Affichage de <span class="font-medium" x-text="startIndex + 1"></span> à
+                                    <span class="font-medium" x-text="Math.min(endIndex, totalRequests)"></span> sur
+                                    <span class="font-medium" x-text="totalRequests"></span> résultats
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                    <button @click="previousPage" :disabled="currentPage === 1"
+                                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-dark-secondary hover:bg-gray-50">
+                                        Précédent
+                                    </button>
+                                    <template x-for="page in pageNumbers" :key="page">
+                                        <button @click="goToPage(page)"
+                                                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium"
+                                                :class="page === currentPage ? 'z-10 bg-primary border-primary text-white' : 'text-dark-secondary hover:bg-gray-50'"
+                                                x-text="page">
+                                        </button>
+                                    </template>
+                                    <button @click="nextPage" :disabled="currentPage === totalPages"
+                                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-dark-secondary hover:bg-gray-50">
+                                        Suivant
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div x-show="showRequestModal" 
+         class="fixed inset-0 z-50 overflow-y-auto"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50" @click="showRequestModal = false"></div>
+            
+            <div class="relative bg-white rounded-lg w-full max-w-4xl"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100">
+                
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-6">
+                        <h2 class="text-2xl font-bold text-dark" x-text="selectedRequest?.title"></h2>
+                        <button @click="showRequestModal = false" class="text-dark-secondary hover:text-dark">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-6">
+                            <!-- Client Info -->
+                            <div>
+                                <h3 class="text-lg font-medium text-dark mb-2">Informations client</h3>
+                                <div class="space-y-2">
+                                    <p class="text-dark-secondary">
+                                        <span class="font-medium">Nom :</span>
+                                        <span x-text="selectedRequest?.user_name"></span>
+                                    </p>
+                                    <p class="text-dark-secondary">
+                                        <span class="font-medium">Email :</span>
+                                        <span x-text="selectedRequest?.user_email"></span>
+                                    </p>
+                                    <p class="text-dark-secondary">
+                                        <span class="font-medium">Type de compte :</span>
+                                        <span x-text="accountTypeLabel(selectedRequest?.account_type)"></span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Request Details -->
+                            <div>
+                                <h3 class="text-lg font-medium text-dark mb-2">Détails de la demande</h3>
+                                <div class="space-y-2">
+                                    <p class="text-dark-secondary" x-text="selectedRequest?.description"></p>
+                                    <p class="text-dark-secondary">
+                                        <span class="font-medium">Budget :</span>
+                                        <span x-text="formatBudget(selectedRequest?.budget)"></span>
+                                    </p>
+                                    <p class="text-dark-secondary">
+                                        <span class="font-medium">Date limite :</span>
+                                        <span x-text="formatDate(selectedRequest?.deadline)"></span>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Attached Files -->
+                            <div x-show="selectedRequest?.files?.length > 0">
+                                <h3 class="text-lg font-medium text-dark mb-2">Fichiers joints</h3>
+                                <ul class="space-y-2">
+                                    <template x-for="file in selectedRequest?.files" :key="file.id">
+                                        <li class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                            <span class="text-sm text-dark-secondary" x-text="file.file_name"></span>
+                                            <a :href="'/php/download.php?file=' + file.id" 
+                                               class="text-primary hover:text-primary/80">
+                                                Télécharger
+                                            </a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Status Management -->
+                            <div>
+                                <h3 class="text-lg font-medium text-dark mb-2">Gestion du statut</h3>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark-secondary mb-1">
+                                            Nouveau statut
+                                        </label>
+                                        <select x-model="newStatus" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                                            <option value="pending">En attente</option>
+                                            <option value="approved">Approuvée</option>
+                                            <option value="in_progress">En cours</option>
+                                            <option value="completed">Complétée</option>
+                                            <option value="rejected">Rejetée</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-dark-secondary mb-1">
+                                            Commentaire
+                                        </label>
+                                        <textarea x-model="statusComment" rows="3"
+                                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary resize-none"></textarea>
+                                    </div>
+                                    <button @click="updateRequestStatus" class="btn-primary w-full">
+                                        Mettre à jour le statut
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Status History -->
+                            <div>
+                                <h3 class="text-lg font-medium text-dark mb-2">Historique des statuts</h3>
+                                <div class="space-y-4">
+                                    <template x-for="history in selectedRequest?.status_history" :key="history.id">
+                                        <div class="p-4 bg-gray-50 rounded-lg">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <div>
+                                                    <span class="text-sm font-medium text-dark" x-text="history.admin_name"></span>
+                                                    <span class="text-sm text-dark-secondary">
+                                                        a changé le statut de
+                                                        <span class="font-medium" x-text="statusLabel(history.old_status)"></span>
+                                                        à
+                                                        <span class="font-medium" x-text="statusLabel(history.new_status)"></span>
+                                                    </span>
+                                                </div>
+                                                <span class="text-xs text-dark-secondary" x-text="formatDate(history.created_at)"></span>
+                                            </div>
+                                            <p x-show="history.comment" class="text-sm text-dark-secondary mt-2" x-text="history.comment"></p>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
