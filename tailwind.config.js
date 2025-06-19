@@ -2,15 +2,22 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx,php,html}",
+    "./admin.html",
+    "./register.html",
+    "./request.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        background: '#f9f9f9',
-        primary: '#0070f3',
-        dark: '#0d0d0d',
-        'dark-secondary': '#1e1e1e',
+        'primary': '#0070f3',
+        'background': '#f9f9f9',
+        'dark': '#0d0d0d',
+        'dark-secondary': '#666666',
+      },
+      container: {
+        center: true,
+        padding: '1rem',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],

@@ -5,15 +5,15 @@ import registration from './registration'
 import automationRequest from './automationRequest'
 import adminDashboard from './adminDashboard.js'
 
-// Initialize Alpine.js plugins
+// Register Alpine.js plugins
 Alpine.plugin(focus)
 Alpine.plugin(persist)
 
-// Global store for user state
+// Store for authentication state
 Alpine.store('auth', {
-    user: null,
-    isAuthenticated: false,
-    isAdmin: false,
+    user: Alpine.$persist(null).as('user'),
+    isAuthenticated: Alpine.$persist(false).as('isAuthenticated'),
+    isAdmin: Alpine.$persist(false).as('isAdmin'),
     
     async init() {
         try {

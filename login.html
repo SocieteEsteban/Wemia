@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - WEMIA</title>
+    <link rel="stylesheet" href="/src/css/style.css">
+    <script type="module" src="/src/js/main.js"></script>
+</head>
+<body class="bg-background">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="text-2xl font-bold text-primary">WEMIA</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div class="min-h-screen flex items-center justify-center pt-16 pb-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md mx-auto">
+                <div class="card">
+                    <div class="text-center mb-8">
+                        <h1 class="text-2xl font-bold text-dark">Connexion</h1>
+                        <p class="text-dark-secondary mt-2">
+                            Accédez à votre espace WEMIA
+                        </p>
+                    </div>
+
+                    <form x-data="{ 
+                        email: '', 
+                        password: '', 
+                        error: '',
+                        loading: false,
+                        async submit() {
+                            this.error = '';
+                            this.loading = true;
+                            
+                            try {
+                                const result = await $store.auth.login(this.email, this.password);
+                                if (!result.success) {
+                                    this.error = result.error;
+                                }
+                            } catch (err) {
+                                this.error = 'Une erreur est survenue lors de la connexion';
+                                console.error('Login error:', err);
+                            } finally {
+                                this.loading = false;
+                            }
+                        }
+                    }" @submit.prevent="submit" class="space-y-6">
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" x-model="email" required
+                                   class="input-field" placeholder="votre@email.com">
+                        </div>
+
+                        <!-- Password -->
+                        <div>
+                            <label for="password" class="form-label">Mot de passe</label>
+                            <input type="password" id="password" x-model="password" required
+                                   class="input-field" placeholder="••••••••">
+                        </div>
+
+                        <!-- Error Message -->
+                        <div x-show="error" x-cloak
+                             class="p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="text-red-600 text-sm" x-text="error"></p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-primary w-full"
+                                :class="{ 'opacity-75 cursor-not-allowed': loading }"
+                                :disabled="loading">
+                            <span x-show="!loading">Se connecter</span>
+                            <span x-show="loading">Connexion en cours...</span>
+                        </button>
+
+                        <!-- Register Link -->
+                        <p class="text-center text-dark-secondary">
+                            Pas encore de compte ?
+                            <a href="/register.html" class="text-primary hover:underline">
+                                Créer un compte
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
