@@ -1,0 +1,55 @@
+Tu es un expert développeur fullstack moderne (Next.js, Tailwind CSS, Node.js, MySQL) et un designer UX/UI minimaliste inspiré de l’expérience Uber ou Stripe. Crée-moi un projet web appelé **WEMIA**, une plateforme pour particuliers, freelancers, PME ou grandes entreprises permettant de **demander des automatisations avec n8n et IA**.
+
+🧠 Objectif : une interface ultra-intuitive, sobre, avec animations fluides, interactions modernes, et responsive design.
+
+📄 Structure demandée :
+
+1. **Page d’accueil / home**
+   - Menu en haut avec logo, liens vers "Fonctionnalités", "Secteurs", "Connexion"
+   - Titre accrocheur et description de la plateforme
+   - Bouton bien visible : “Demander une automatisation”
+   - Partie "Ce que WEMIA permet de faire" avec icônes
+   - Sections : Pour qui ? (freelances, PME, grandes entreprises), Secteurs (RH, marketing, support, etc.)
+
+2. **Système d’authentification utilisateur (login/signup)**
+   - Quand un utilisateur clique sur “Demander une automatisation” et qu’il n’est pas connecté, ouvrir une interface de connexion
+   - Lien discret : “Vous n’avez pas encore de compte ? Créez-en un”
+   - Les comptes permettent de suivre plusieurs demandes d’automatisations
+   - Stocker les emails, noms, entreprise, téléphone en base de données
+
+3. **Formulaire demande d’automatisation**
+   - Une fois connecté : formulaire pour décrire le besoin, le budget, la deadline, joindre un fichier si besoin
+   - Chaque demande est liée au compte utilisateur et sauvegardée
+
+4. **Espace administrateur**
+   - Login admin sécurisé
+   - Affichage de toutes les demandes : nom de l’entreprise, contact, description, statut (en cours / accepté / refusé)
+   - Bouton pour changer le statut d’une demande
+   - Option pour ajouter des notes internes (non visibles par l’utilisateur)
+
+🎨 Design :
+- Couleurs : fond clair (#f9f9f9), accent sobre (bleu foncé ou noir léger)
+- Typographie nette (ex : Inter, Helvetica)
+- Transitions et animations douces (FadeIn, SlideIn)
+- Responsive design pour mobile et desktop
+
+🛠️ Tech stack :
+- Next.js
+- Tailwind CSS
+- MySQL (via Prisma ou autre ORM)
+- Auth.js (anciennement NextAuth)
+- API REST ou RPC internes
+
+📦 Base de données MySQL à utiliser :
+- host : 127.0.0.1:3306
+- database : u819159169_wemia
+- user : u819159169_wemia
+- password : @20SX0k3w@27
+
+Crée une architecture de projet claire avec :
+- `/pages` : home, login, dashboard utilisateur, admin
+- `/components` : navbar, bouton CTA, formulaire, cartes
+- `/lib` : connexion DB
+- `/styles` : tailwind.config + animations personnalisées
+
+Tu peux ajouter des données mock ou seeds si besoin.
