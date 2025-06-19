@@ -1,0 +1,23 @@
+Erreur
+Analyse statique :
+
+8 erreurs trouvées lors de l'analyse.
+
+Un nom de variable était attendu. (near " " at position 1)
+Un nom de variable était attendu. (near " " at position 15)
+Début d'énoncé inattendu. (near "@" at position 0)
+Début d'énoncé inattendu. (near "-0" at position 2)
+Début d'énoncé inattendu. (near "0" at position 5)
+Début d'énoncé inattendu. (near "+1" at position 7)
+Début d'énoncé inattendu. (near "59" at position 10)
+Début d'énoncé inattendu. (near "@@" at position 13)
+Requête SQL : Copier
+
+@ -0,0 +1,59 @@ -- Create users table CREATE TABLE IF NOT EXISTS users ( id INT AUTO_INCREMENT PRIMARY KEY, email VARCHAR(255) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, first_name VARCHAR(100), last_name VARCHAR(100), company_name VARCHAR(255), is_admin BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+MySQL a répondu : Documentation
+
+#1064 - Erreur de syntaxe près de '@ -0,0 +1,59 @@
+-- Create users table
+CREATE TABLE IF NOT EXISTS users (
+...' à la ligne 1
