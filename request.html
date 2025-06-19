@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demande d'automatisation - WEMIA</title>
+    <link rel="stylesheet" href="/src/css/style.css">
+    <script type="module" src="/src/js/main.js"></script>
+</head>
+<body class="bg-background" x-data="automationRequest">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-primary">WEMIA</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-dark-secondary hover:text-primary transition-colors">Accueil</a>
+                    <button @click="$store.auth.logout()" class="text-dark-secondary hover:text-primary transition-colors">
+                        Déconnexion
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Request Form -->
+    <div class="min-h-screen pt-32 pb-12">
+        <div class="container">
+            <div class="max-w-3xl mx-auto">
+                <h1 class="text-3xl font-bold text-dark mb-8">Demande d'automatisation</h1>
+
+                <div class="bg-white rounded-xl shadow-sm p-8">
+                    <form @submit.prevent="handleSubmit" class="space-y-6">
+                        <input type="hidden" name="csrf_token" x-model="csrfToken">
+
+                        <!-- Titre -->
+                        <div>
+                            <label for="title" class="block text-sm font-medium text-dark-secondary mb-1">
+                                Titre de votre besoin
+                            </label>
+                            <input type="text" id="title" x-model="form.title" required
+                                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                   placeholder="Ex: Automatisation du traitement des factures">
+                        </div>
+
+                        <!-- Description -->
+                        <div>
+                            <label for="description" class="block text-sm font-medium text-dark-secondary mb-1">
+                                Description détaillée
+                            </label>
+                            <textarea id="description" x-model="form.description" required rows="6"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary resize-none"
+                                    placeholder="Décrivez votre besoin en détail : processus actuel, objectifs, contraintes..."></textarea>
+                        </div>
+
+                        <!-- Budget et Deadline -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="budget" class="block text-sm font-medium text-dark-secondary mb-1">
+                                    Budget estimé (€)
+                                </label>
+                                <input type="number" id="budget" x-model="form.budget" min="0" step="100"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                       placeholder="Ex: 1000">
+                            </div>
+                            <div>
+                                <label for="deadline" class="block text-sm font-medium text-dark-secondary mb-1">
+                                    Date souhaitée
+                                </label>
+                                <input type="date" id="deadline" x-model="form.deadline"
+                                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+                                       :min="minDate">
+                            </div>
+                        </div>
+
+                        <!-- File Upload -->
+                        <div>
+                            <label class="block text-sm font-medium text-dark-secondary mb-1">
+                                Documents joints
+                            </label>
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-primary transition-colors"
+                                 @dragover.prevent="dragover = true"
+                                 @dragleave.prevent="dragover = false"
+                                 @drop.prevent="handleDrop($event)"
+                                 :class="{'border-primary bg-primary/5': dragover}">
+                                <div class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4-4m4-4h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg>
+                                    <div class="flex text-sm text-gray-600">
+                                        <label for="file-upload" class="relative cursor-pointer rounded-md font-medium text-primary hover:text-primary/80">
+                                            <span>Téléverser un fichier</span>
+                                            <input id="file-upload" type="file" class="sr-only" @change="handleFileSelect" multiple>
+                                        </label>
+                                        <p class="pl-1">ou glisser-déposer</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500">
+                                        PNG, JPG, PDF jusqu'à 10MB
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <!-- File List -->
+                            <ul class="mt-4 space-y-2" x-show="files.length > 0">
+                                <template x-for="(file, index) in files" :key="index">
+                                    <li class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                        <span class="text-sm text-dark-secondary" x-text="file.name"></span>
+                                        <button type="button" @click="removeFile(index)" class="text-red-500 hover:text-red-700">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                            </svg>
+                                        </button>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div x-show="error" x-cloak
+                             class="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                            <p x-text="error"></p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" 
+                                class="btn-primary w-full"
+                                :disabled="loading"
+                                :class="{'opacity-50 cursor-not-allowed': loading}">
+                            <span x-show="!loading">Envoyer la demande</span>
+                            <span x-show="loading">
+                                <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div x-show="showSuccessModal" 
+         class="fixed inset-0 z-50 overflow-y-auto"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50" @click="showSuccessModal = false"></div>
+            
+            <div class="relative bg-white rounded-lg w-full max-w-md p-8 text-center"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100">
+                
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                
+                <h3 class="text-xl font-bold text-dark mb-2">Demande envoyée avec succès !</h3>
+                <p class="text-dark-secondary mb-6">
+                    Nous avons bien reçu votre demande d'automatisation. Notre équipe va l'étudier et vous recontacter rapidement.
+                </p>
+                
+                <div class="space-x-4">
+                    <button @click="showSuccessModal = false; window.location.href = '/'" 
+                            class="btn-primary">
+                        Retour à l'accueil
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
