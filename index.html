@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEMIA - Automatisation n8n avec IA</title>
+    <link rel="stylesheet" href="/src/css/style.css">
+    <script type="module" src="/src/js/main.js"></script>
+</head>
+<body x-data="{ isOpen: false, showLoginModal: false }">
+    <!-- Navigation -->
+    <nav class="fixed w-full bg-white/80 backdrop-blur-md z-50 border-b border-gray-200">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="/" class="flex items-center">
+                    <span class="text-2xl font-bold text-primary">WEMIA</span>
+                </a>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-dark-secondary hover:text-primary transition-colors">Fonctionnalités</a>
+                    <a href="#sectors" class="text-dark-secondary hover:text-primary transition-colors">Secteurs</a>
+                    <button @click="showLoginModal = true" class="btn-outline">Connexion</button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <button @click="isOpen = !isOpen" class="md:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path x-show="!isOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        <path x-show="isOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div x-show="isOpen" class="md:hidden" x-transition>
+            <div class="container py-4 space-y-4">
+                <a href="#features" class="block text-dark-secondary hover:text-primary">Fonctionnalités</a>
+                <a href="#sectors" class="block text-dark-secondary hover:text-primary">Secteurs</a>
+                <button @click="showLoginModal = true" class="btn-outline w-full">Connexion</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-gradient-to-b from-background to-white">
+        <div class="container">
+            <div class="max-w-3xl mx-auto text-center fade-in">
+                <h1 class="text-4xl sm:text-5xl font-bold text-dark mb-6">
+                    Automatisez vos processus avec l'IA
+                </h1>
+                <p class="text-xl text-dark-secondary mb-8">
+                    WEMIA connecte vos outils et automatise vos tâches répétitives grâce à n8n et l'intelligence artificielle.
+                </p>
+                <button @click="showLoginModal = true" class="btn-primary text-lg">
+                    Demander votre automatisation
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20">
+        <div class="container">
+            <h2 class="text-3xl font-bold text-center mb-12">Ce que WEMIA permet de faire</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Automatisation Intelligente</h3>
+                    <p class="text-dark-secondary">Connectez vos applications et automatisez vos workflows avec une IA qui comprend vos besoins.</p>
+                </div>
+                <!-- Autres features similaires -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal -->
+    <div x-show="showLoginModal" 
+         class="fixed inset-0 z-50 overflow-y-auto"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        <div class="flex items-center justify-center min-h-screen px-4">
+            <div class="fixed inset-0 bg-black/50" @click="showLoginModal = false"></div>
+            
+            <div class="relative bg-white rounded-lg w-full max-w-md p-8"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 transform scale-95"
+                 x-transition:enter-end="opacity-100 transform scale-100">
+                <button @click="showLoginModal = false" class="absolute top-4 right-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                
+                <h2 class="text-2xl font-bold mb-6">Connexion</h2>
+                <form action="/php/login.php" method="POST" class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-dark-secondary mb-1">Email</label>
+                        <input type="email" id="email" name="email" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-dark-secondary mb-1">Mot de passe</label>
+                        <input type="password" id="password" name="password" required
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                    </div>
+                    <button type="submit" class="btn-primary w-full">Se connecter</button>
+                </form>
+                <p class="mt-4 text-center text-sm text-dark-secondary">
+                    Pas encore de compte ? 
+                    <a href="/register.html" class="text-primary hover:underline">Créer un compte</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
