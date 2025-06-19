@@ -1,69 +1,57 @@
-# WEMIA
+Tu es un développeur frontend expert en HTML5, Tailwind CSS, JavaScript moderne (ES6+), Alpine.js et PHP pour le back. Tu vas créer une plateforme web nommée **WEMIA** qui permet aux particuliers, freelances, PME et grandes entreprises de demander des automatisations n8n avec IA.
 
-WEMIA est une plateforme web moderne conçue pour les particuliers, freelancers, PME et grandes entreprises. Elle permet de **demander des automatisations utilisant n8n et l'intelligence artificielle**. L'objectif est de fournir une interface intuitive, minimaliste et responsive, avec des animations fluides et des interactions modernes.
+🎯 Objectif : design sobre, intuitif et premium, inspiré d’Uber ou Stripe, avec de belles animations, une navigation fluide, et responsive mobile-first.
 
-## Fonctionnalités
+💡 Structure du projet :
 
-### 1. Page d’accueil
-- **Menu de navigation** : Inclut le logo et des liens vers "Fonctionnalités", "Secteurs" et "Connexion".
-- **Section principale** : Titre accrocheur et description de la plateforme.
-- **Bouton d’appel à l’action** : “Demander une automatisation” bien visible.
-- **Présentation des capacités** : Icônes illustrant ce que WEMIA permet de faire.
-- **Public cible** : Sections dédiées aux freelancers, PME et grandes entreprises.
-- **Secteurs** : Mise en avant des domaines comme les RH, le marketing, le support, etc.
+1. **Page d’accueil (`index.html`)**
+   - Menu fixe : logo + liens (Fonctionnalités, Secteurs, Connexion)
+   - Hero section avec slogan et description
+   - Bouton CTA : “Demander ton automatisation” (animation hover)
+   - Section “Ce que WEMIA permet de faire” avec icônes
+   - Section “Pour qui ?” : freelances, PME, grandes entreprises
+   - Section “Secteurs” : RH, support, marketing, etc.
 
-### 2. Système d’authentification
-- **Connexion/Inscription** : Interface de connexion affichée lorsque l’utilisateur clique sur “Demander une automatisation” sans être connecté.
-- **Création de compte** : Lien discret pour créer un compte si l’utilisateur n’en possède pas.
-- **Suivi des demandes** : Les utilisateurs peuvent suivre plusieurs demandes d’automatisations via leur compte.
+2. **Système d’authentification (modale ou page dédiée)**
+   - Connexion / Création de compte
+   - Si l’utilisateur clique sur “Demander une automatisation” sans être connecté → ouvrir formulaire de login
+   - Message : “Vous n’avez pas de compte ? Créez-en un”
+   - Enregistrement des coordonnées en base MySQL
 
-### 3. Formulaire de demande d’automatisation
-- **Champs du formulaire** : Permet de décrire le besoin, le budget, la deadline et de joindre un fichier si nécessaire.
-- **Lien avec le compte utilisateur** : Chaque demande est sauvegardée et associée au compte de l’utilisateur.
+3. **Formulaire de demande d’automatisation**
+   - Champs : titre du besoin, description, budget, deadline, fichier joint
+   - Associer la demande au compte utilisateur
+   - Bouton “Envoyer” avec feedback de succès/échec
 
-### 4. Espace administrateur
-- **Connexion sécurisée** : Accès réservé aux administrateurs.
-- **Gestion des demandes** : Affichage des demandes avec les informations de contact, description et statut (en cours, accepté, refusé).
-- **Mise à jour du statut** : Bouton pour modifier le statut d’une demande.
-- **Notes internes** : Possibilité d’ajouter des commentaires visibles uniquement par les administrateurs.
+4. **Espace admin (admin.html + admin.js)**
+   - Authentification admin
+   - Tableau avec toutes les demandes (nom entreprise, contact, description, statut)
+   - Bouton pour accepter/refuser une demande
+   - Zone pour ajouter des notes internes
 
-## Design
+🎨 Design :
+- Couleurs : #f9f9f9 (fond), #0d0d0d ou #1e1e1e (texte), #0070f3 (accent)
+- Typo moderne : Inter ou DM Sans
+- Effets : animation fade-in, transitions sur boutons, responsive en Tailwind
 
-- **Couleurs** : Fond clair (#f9f9f9) avec des accents sobres (bleu foncé ou noir léger).
-- **Typographie** : Police nette comme Inter ou Helvetica.
-- **Animations** : Transitions douces (FadeIn, SlideIn).
-- **Responsive design** : Adapté aux mobiles et aux ordinateurs.
+🔧 Stack technique :
+- **Vite.js** (ou projet statique organisé)
+- **Tailwind CSS** pour les styles
+- **Alpine.js** pour les interactions légères (modales, toggle, formulaires dynamiques)
+- **PHP (backend léger)** pour traitements : login, enregistrement, envoi des demandes
+- **MySQL** pour la base de données, via `mysqli` ou `PDO`
 
-## Stack technique
+📦 Base de données MySQL à utiliser :
+- host : 127.0.0.1:3306  
+- database : u819159169_wemia  
+- user : u819159169_wemia  
+- password : @20SX0k3w@27
 
-- **Frontend** : Next.js avec Tailwind CSS pour le style.
-- **Backend** : Node.js avec une base de données MySQL.
-- **Authentification** : Auth.js (anciennement NextAuth).
-- **API** : REST ou RPC internes.
+Organise le projet avec :
+- `/index.html`, `/login.html`, `/admin.html`
+- `/assets/css` : fichiers Tailwind compilés
+- `/assets/js` : scripts JS (Alpine, logique formulaire, etc.)
+- `/php/` : scripts backend PHP (`login.php`, `submit_request.php`, `admin_fetch.php`, etc.)
+- `/includes/` : connexions DB + sécurité
 
-## Structure du projet
-
-- `/pages` : Contient les pages comme l’accueil, la connexion, le tableau de bord utilisateur et l’espace administrateur.
-- `/components` : Composants réutilisables tels que la barre de navigation, les boutons CTA, les formulaires et les cartes.
-- `/lib` : Utilitaires pour la connexion à la base de données.
-- `/styles` : Configuration Tailwind et animations personnalisées.
-
-## Démarrage
-
-1. Clonez le dépôt :
-   ```bash
-   git clone https://github.com/esteban/Wemia.git
-   ```
-2. Installez les dépendances :
-   ```bash
-   npm install
-   ```
-3. Lancez le serveur de développement :
-   ```bash
-   npm run dev
-   ```
-4. Accédez à l'application via `http://localhost:3000`.
-
-## Licence
-
-Ce projet est sous licence MIT.
+Tu peux inclure des données fictives (mock JSON) et des composants réutilisables. Utilise Tailwind pour tout styliser proprement, et Alpine.js pour les modales, toggle de navigation, gestion de formulaire sans trop de JS lourd.
